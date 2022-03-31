@@ -1,26 +1,40 @@
 import Head from "next/head";
 import Link from 'next/link';
 import RecipesList from "../components/recipe-list";
-import { prisma } from "../lib/db"
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSession, signOut } from "next-auth/react";
 import { PlusIcon } from '@heroicons/react/outline';
+import axios from "axios";
 
-export async function getServerSideProps() {
-    const recipesList = await prisma.recipe.findMany({ orderBy: { name: "asc" } });
-    return {
-        props: {
-            list: JSON.parse(JSON.stringify(recipesList)),
-        },
-    };
-}
+// IF we wanted to be server side generated
+// export async function getStaticProps() {
+//     const recipesList = await prisma.recipe.findMany({
+//         where: { owner_id: session?.user.id },
+//         orderBy: { name: "asc" },
+//     });
+//     return {
+//         props: {
+//             list: JSON.parse(JSON.stringify(recipesList)),
+//         },
+//     };
+// }
 
-export default function Home({ list = [] }) {
-    const { data: session } = useSession();
+export default function Home() {
     const router = useRouter();
+    const { data: session } = useSession();
     const [keyword, setKeyword ] = useState(null);
+    const [list, setList ] = useState([]);
     const user = session?.user;
+
+    useEffect(async () => {
+        try {
+            const recipesList = await axios.get('/api/list');
+            setList(recipesList.data);            
+        } catch (error) {
+            console.error(error);
+        }
+    }, []);
 
     const filteredList = () => {
         if (keyword) {
@@ -33,7 +47,7 @@ export default function Home({ list = [] }) {
     }
 
     return (
-        <div className="container">
+        <div className="main">
             <Head>
                 <title>Recipes</title>
                 <link rel="icon" href="/favicon.ico" />
@@ -41,7 +55,10 @@ export default function Home({ list = [] }) {
             <div className="container">
                 <div className="row">
                     <div className="col text-end">
-                        {user ? <>{user.email} <button className="btn btn-outline-secondary" onClick={() => signOut()}>Sign Out</button>  </> : <Link href="/api/auth/signin"><button className="btn btn-outline-secondary">Sign In</button></Link>}
+                        {user ? 
+                            <>{user.email} <button className="btn btn-outline-secondary" onClick={() => signOut()}>Sign Out</button>  </>
+                            : <Link href="/api/auth/signin"><button className="btn btn-outline-secondary">Sign In</button></Link>
+                        }
                     </div>
                 </div>
                 <h1 className="text-center">Recipes Book</h1>

@@ -55,6 +55,7 @@ export async function getStaticProps({ params }) {
     if (recipe) {
         return {
             props: JSON.parse(JSON.stringify(recipe)),
+            revalidate: 5, // ISR
         }
     }
     return {
