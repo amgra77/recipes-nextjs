@@ -1,20 +1,22 @@
 import Link from 'next/link';
 import axios from 'axios';
-import { useRouter } from 'next/router';
 import { useSession } from "next-auth/react";
 import { PencilIcon, BookOpenIcon, TrashIcon } from '@heroicons/react/outline';
 import { toast } from 'react-hot-toast';
+import ModalConformation from "./modal-confrmation";
+import { useState } from 'react';
 
-const Card = ({ recipe }) => {
+const Card = ({ recipe, onUpdateList }) => {
     const { data: session } = useSession();
-    const router = useRouter();
+    const [showConfirmation, setShowConfirmation] = useState(false);
 
     const deleteRecipe = async () => {
         let toastId = toast.loading('Deleting...');
         try {
             await axios.delete(`/api/delete?id=${recipe.id}`);
             toast.success('Deleted', { id: toastId });
-            router.push('/');
+            setShowConfirmation(false);
+            onUpdateList();
         } catch (error) {
             console.error(error);
             toast.error('Error deleting recipe', { id: toastId });
@@ -40,11 +42,15 @@ const Card = ({ recipe }) => {
                         </Link>
                     : null }
                     
+                    {/* deleteRecipe */}
                     {(session?.user && session.user.id === recipe.owner_id) ?
-                        <TrashIcon className="text-danger h-5 w-5 me-3" role="button" style={{'width': '20px'}} onClick={deleteRecipe}></TrashIcon>
+                        <TrashIcon className="text-danger h-5 w-5 me-3" role="button" style={{'width': '20px'}} onClick={() => setShowConfirmation(!showConfirmation)}></TrashIcon>
                     : null}
                 </div>
             </div>
+            <ModalConformation show={showConfirmation} onYes={deleteRecipe} onNo={() => setShowConfirmation(!showConfirmation)}>
+                Are you sure you want to delete recipe <strong>{recipe.name}</strong>?
+            </ModalConformation>
         </div>
     )
 }

@@ -26,6 +26,7 @@ export default function Home() {
     const [keyword, setKeyword ] = useState(null);
     const [list, setList ] = useState([]);
     const user = session?.user;
+    const [updated, setUpdated ] = useState(new Date().toISOString());
 
     useEffect(async () => {
         try {
@@ -34,7 +35,7 @@ export default function Home() {
         } catch (error) {
             console.error(error);
         }
-    }, []);
+    }, [updated]);
 
     const filteredList = () => {
         if (keyword) {
@@ -69,15 +70,17 @@ export default function Home() {
                         </div>
                     </div>
                 : null}
-                <div className="row">
-                    <div className="col">
-                        <div className="form-group">
-                            <label htmlFor="keyword">Keyword</label>
-                            <input type="text" className="form-control" id="keyword" placeholder="Enter partial name or ingridient to filter recipes list" onChange={(event) => setKeyword(event.target.value)} />
+                {filteredList().length ? 
+                    <div className="row">
+                        <div className="col">
+                            <div className="form-group">
+                                <label htmlFor="keyword">Keyword</label>
+                                <input type="text" className="form-control" id="keyword" placeholder="Enter partial name or ingridient to filter recipes list" onChange={(event) => setKeyword(event.target.value)} />
+                            </div>
                         </div>
                     </div>
-                </div>
-                <RecipesList list={filteredList()}></RecipesList>
+                : null}
+                <RecipesList list={filteredList()} onUpdateList={() => setUpdated(new Date().toISOString())}></RecipesList>
             </div>
         </div>
     )

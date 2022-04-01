@@ -1,3 +1,4 @@
+import Head from "next/head";
 import { useRouter } from 'next/router';
 import axios from 'axios';
 import { Formik, Form } from 'formik';
@@ -33,32 +34,37 @@ export default function Create() {
     }
 
     return (
-        <Formik initialValues={initialValues} validationSchema={formValidation} onSubmit={(values) => addRecipe(values)}>
-            {({ isValid, dirty }) => (
-                <Form>
-                    <div className='container'>
-                        <div className="row">
-                            <div className="col">
-                                <MyInput label="Recipe Name" name="name" type="text" placeholder="Enter recipe's name" ></MyInput>
+        <>
+            <Head>
+                <title>New Recipe</title>
+            </Head>
+            <Formik initialValues={initialValues} validationSchema={formValidation} onSubmit={(values) => addRecipe(values)}>
+                {({ isValid, dirty }) => (
+                    <Form>
+                        <div className='container'>
+                            <div className="row">
+                                <div className="col">
+                                    <MyInput label="Recipe Name" name="name" type="text" placeholder="Enter recipe's name" ></MyInput>
+                                </div>
+                            </div>
+                            <div className="row">
+                                <div className="col">
+                                    <MyTextArea label="Instructions" name="content" placeholder="Enter recipe's instructions" ></MyTextArea>
+                                </div>
+                            </div>
+                            <div className="row">
+                                <div className="col">
+                                    <button className='btn btn-primary' type='submit' disabled={!isValid || !dirty}>Save</button>
+                                    <button className='btn btn-flat' onClick={() => router.back()}>Cancel</button>
+                                </div>
                             </div>
                         </div>
-                        <div className="row">
-                            <div className="col">
-                                <MyTextArea label="Instructions" name="content" placeholder="Enter recipe's instructions" ></MyTextArea>
-                            </div>
-                        </div>
-                        <div className="row">
-                            <div className="col">
-                                <button className='btn btn-primary' type='submit' disabled={!isValid || !dirty}>Save</button>
-                                <button className='btn btn-flat' onClick={() => router.back()}>Cancel</button>
-                            </div>
-                        </div>
-                    </div>
 
-                </Form>
-            
-            )}
-        </Formik>
+                    </Form>
+                
+                )}
+            </Formik>
+        </>
     );
 }
 
