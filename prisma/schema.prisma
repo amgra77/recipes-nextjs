@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -43,6 +43,8 @@ model User {
   image         String?
   Account       Account[]
   Session       Session[]
+  Home          Home[]
+  UserFavorites UserFavorites[]
   Recipes       Recipe[]
 }
 
@@ -52,6 +54,32 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+model UserFavorites {
+  favoriteUserId String
+  favoriteHomeId String
+  home           Home @relation(fields: [favoriteHomeId], references: [id])
+  user           User @relation(fields: [favoriteUserId], references: [id])
+
+  @@id([favoriteUserId, favoriteHomeId])
+}
+
+// Homes
+model Home {
+  id            String @id @default(cuid())
+  image         String?
+  title         String
+  description   String
+  price         Float
+  guests        Int
+  beds          Int
+  baths         Int
+  created       DateTime @default(now())
+  updated       DateTime @updatedAt
+  owner_id      String
+  user          User @relation(fields: [owner_id], references: [id])
+  UserFavorites UserFavorites[]
 }
 
 // Recipes
