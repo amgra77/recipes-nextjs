@@ -42,8 +42,8 @@ model User {
   emailVerified DateTime?
   image         String?
   Account       Account[]
-  Home          Home[]
   Session       Session[]
+  Home          Home[]
   UserFavorites UserFavorites[]
   Recipes       Recipe[]
 }

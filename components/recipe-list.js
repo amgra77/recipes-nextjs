@@ -11,7 +11,7 @@ const RecipesList = ({ list, onUpdateList }) => {
                 <div>
                     <div className="row empty-list">
                         {[...Array(4)].map((x, i) =>
-                        <div className="col col-sm-12 col-lg-3">
+                        <div key={`empty${i}`} className="col col-sm-12 col-lg-3">
                             <div className="card">
                                 <div className="card-header">Name Placeholder</div>
                                 <div className="card-body">* Instructions...</div>
@@ -34,5 +34,4 @@ const RecipesList = ({ list, onUpdateList }) => {
     )
 }
 
-export default RecipesList;  
-
+export default RecipesList;

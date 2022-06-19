@@ -58,12 +58,7 @@ export async function getStaticProps({ params }) {
             revalidate: 5, // ISR
         }
     }
-    return {
-        redirect: {
-            destination: '/',
-            permanent: false,
-        }
-    }
+    return { notFound: true }
 }
 
 export default Recipe;
